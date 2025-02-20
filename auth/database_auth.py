@@ -51,5 +51,13 @@ def verify_user(username, password):
         return verify_password(stored_hash, password, salt)
     return False
 
+def update_password(username, new_password): 
+    conn, cursor = get_db_connection()
+    salt = generate_salt()
+    password_hash = hash_password(new_password, salt)
+    cursor.execute("UPDATE users SET password_hash = ?, salt = ? WHERE username = ?", (password_hash,salt, username))
+    conn.commit()
+    conn.close()
+
 # Initialize when module loads
 create_auth_db()

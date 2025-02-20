@@ -1,0 +1,11 @@
+# Ignore Python virtual environment
+streamlit_venv/
+.streamlit_venv/
+
+# Ignore SQLite database files
+*.db
+*.sqlite3
+
+# Ignore Streamlit and Python cache
+__pycache__/
+.streamlit/

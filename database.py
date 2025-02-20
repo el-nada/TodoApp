@@ -11,50 +11,59 @@ def init_db():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL, 
             task TEXT NOT NULL,
-            description TEXT NOT NULL, 
-            status TEXT DEFAULT 'Pending'
-        )
+            description TEXT NOT NULL,
+            priority TEXT NOT NULL DEFAULT 'High',
+            due_date DATE, 
+            status TEXT DEFAULT 'Pending',
+            FOREIGN KEY (user_id) REFERENCES users(id) 
+        );
     """)
     conn.commit()
     conn.close()
 
 # Add a task
-def add_task(task, task_description):
+def add_task(task, task_description, task_priority, user_id, due_date):
     conn, cursor = get_db_connection()
-    cursor.execute("INSERT INTO tasks (task, description) VALUES ((?),(?))", (task,task_description))
+    cursor.execute("INSERT INTO tasks (task, description, priority, user_id, due_date) VALUES (?, ?, ?, ?, ?)",(task, task_description, task_priority, user_id, due_date))
     conn.commit()
     conn.close()
 
 # Fetch tasks
-def get_tasks():
+def get_tasks(user_id):
     conn, cursor = get_db_connection()
-    cursor.execute("SELECT id, task, description, status FROM tasks")
+    cursor.execute("SELECT id, task, description, priority, status, due_date FROM tasks WHERE user_id=?", (user_id,))
     tasks = cursor.fetchall()
     conn.close()
     return tasks
 
 # Delete a task
-def delete_task(task_id):
+def delete_task(task_id, user_id):
     conn, cursor = get_db_connection()
-    cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+    cursor.execute("DELETE FROM tasks WHERE id = ? AND user_id=?", (task_id,user_id))
     conn.commit()
     conn.close()
 
 # Update task status
-def update_status(task_id, new_status):
+def update_status(task_id, new_status, user_id):
     conn, cursor = get_db_connection()
-    cursor.execute("UPDATE tasks SET status = ? WHERE id = ?", (new_status, task_id))
+    cursor.execute("UPDATE tasks SET status = ? WHERE id = ? AND user_id=?", (new_status, task_id, user_id))
     conn.commit()
     conn.close()
 
-# Fetch the id of the lask task added
-def get_last_task_id():
+# Update task priority
+def update_priority(task_id, new_priority, user_id): 
     conn, cursor = get_db_connection()
-    cursor.execute("SELECT id FROM tasks ORDER BY id DESC LIMIT 1")
-    row = cursor.fetchone()
+    cursor.execute("UPDATE tasks SET priority = ? WHERE id = ? AND user_id=?", (new_priority, task_id, user_id))
+    conn.commit()
     conn.close()
-    return row[0] if row else None
     
+def update_date(task_id, new_due_date, user_id): 
+    conn, cursor = get_db_connection()
+    cursor.execute("UPDATE tasks SET due_date = ? WHERE id = ? AND user_id=?", (new_due_date, task_id, user_id))
+    conn.commit()
+    conn.close()
+
 # Initialize database when the module is imported
 init_db()

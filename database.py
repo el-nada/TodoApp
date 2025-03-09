@@ -38,6 +38,15 @@ def get_tasks(user_id):
     conn.close()
     return tasks
 
+#Fetch task with a query 
+def get_tasks_query(user_id, query):
+    query = str(query).lower()
+    conn, cursor = get_db_connection()
+    cursor.execute(""" SELECT id, task, description, priority, status, due_date FROM tasks WHERE user_id = ? AND ( LOWER(task) LIKE ? OR LOWER(description) LIKE ?)""", (user_id, f'%{query}%', f'%{query}%'))
+    tasks = cursor.fetchall()
+    conn.close()
+    return tasks
+
 # Delete a task
 def delete_task(task_id, user_id):
     conn, cursor = get_db_connection()

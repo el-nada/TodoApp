@@ -2,9 +2,10 @@ import streamlit as st
 from database import *
 
 # Function to display tasks
-def show_tasks(user_id):
-    tasks = get_tasks(user_id)
+def show_tasks(user_id, task, search):
+    tasks = get_tasks_query(user_id, task) if search else get_tasks(user_id)
     if tasks:
+
         for task_id, task, description, priority, status, date in tasks:
             # Initialize session state for change tracking
             if f"original_{task_id}" not in st.session_state:
@@ -69,7 +70,7 @@ def show_tasks(user_id):
                     del st.session_state[f"original_{task_id}"]
                     st.rerun()
     else:
-        st.info("No tasks yet. Add a new task above!")
-
-
-
+        if not search : 
+            st.session_state.no_task = True
+        else : 
+            st.session_state.no_task = True

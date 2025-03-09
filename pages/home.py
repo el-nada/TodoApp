@@ -4,22 +4,27 @@ from logic import *
 from auth.database_auth import get_id
 
 def render():
-
-    st.write(f"Welcome {st.session_state.username}!")
-
-    if st.button("Logout"):
-        st.session_state.authenticated = False
-        st.rerun()
-
-    st.title("To do list")
     
+    col1, col2 = st.columns([0.85, 0.15]) 
+    with col1:
+        st.title(f"Welcome {st.session_state.username}!")
+            
+    with col2:
+        st.write(" ")
+        st.write(" ")
+        if st.button("Logout"):
+            st.session_state.authenticated = False
+            st.rerun()
+
+    
+    st.title(f"To do list") 
 
     # Initialize session state flag for success message
     if "task_added" not in st.session_state:
         st.session_state.task_added = False
     if "task_incomplete" not in st.session_state: 
         st.session_state.task_incomplete = False
-
+    
     # Form to capture input (supports Enter key and button click)
     with st.form(key="task_form"):
         task_input = st.text_input("Enter a new task :", key="new_task")
@@ -34,9 +39,13 @@ def render():
             add_task(task_input, task_description, task_priority, user_id, due_date)
             st.session_state.task_added = True
             st.session_state.task_incomplete = False  # Reset the error flag on success
+            st.rerun()
 
         elif (submitted and not task_input) or (submitted and not task_description) or (submitted and not due_date): 
             st.session_state.task_incomplete = True 
+            st.rerun()
+
+    search_query = st.text_input("", placeholder="Search by title or description", key='search_input')
 
     # If a task was added in the previous run, display a success message
     if st.session_state.task_added:
@@ -45,6 +54,10 @@ def render():
         st.session_state.task_added = False
     if st.session_state.task_incomplete : 
         st.error("Please fill in all the required fields before submitting.")
-
+        
     # Show existing tasks
-    show_tasks(get_id(st.session_state.username))
+    show_tasks(
+        get_id(st.session_state.username), 
+        search_query,
+        bool(search_query)
+    )

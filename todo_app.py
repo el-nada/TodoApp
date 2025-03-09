@@ -1,6 +1,7 @@
 import streamlit as st
 from pages import auth, home, settings
 
+
 # Initialize session state
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False

@@ -59,5 +59,16 @@ def update_password(username, new_password):
     conn.commit()
     conn.close()
 
+def update_username(username, new_username): 
+    conn, cursor = get_db_connection()
+    try:
+        cursor.execute("UPDATE users SET username = ? WHERE username = ?", (new_username, username))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False  # Username exists
+    finally:
+        conn.close()
+
 # Initialize when module loads
 create_auth_db()

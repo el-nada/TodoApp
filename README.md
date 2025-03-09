@@ -29,7 +29,7 @@ There are detailled in requirements.txt
 3. Search Functionality: Type in search bar to filter tasks in real-time. Supports partial matches (e.g., "doc" finds "Submit Documents").
 
 ## Project Structure
-'''
+```
 TODOAPP/
 ├── auth/               # Authentication modules
 │   ├── auth_utils.py
@@ -42,4 +42,5 @@ TODOAPP/
 ├── todo_app.py         # Main application
 ├── requirements.txt    # Dependencies
 └── README.md           # Documentation
-'''
+```
+
